@@ -50,6 +50,18 @@ func (e *Emulator)Cycle (){
 				e.CPU.PC += 2
 			}
 		}
+
+	case 0x2000: //call Address
+		e.CPU.Stack[e.CPU.SP]= e.CPU.PC
+		e.CPU.SP++
+		e.CPU.PC= nnn
+	
+	case 0x0000: //RET
+		switch opcode {
+		case 0x00EE:
+			e.CPU.SP--
+			e.CPU.PC = e.CPU.Stack[e.CPU.SP]
+		}	
 	
 	case 0x9000:
 		if opcode&0x000F == 0{
@@ -66,6 +78,56 @@ func (e *Emulator)Cycle (){
 		
 	case 0xA000:
 		e.CPU.I= nnn
+
+	//Alu codes (this is the largest fmaily before timers, graphics etc)
+	case 0x8000:
+		switch opcode & 0x000F {
+		case 0x0: // LD Vx, Vy
+			e.CPU.V[X] = e.CPU.V[Y]
+
+		case 0x1: //or
+			e.CPU.V[X] |= e.CPU.V[Y]
+			
+		case 0x2: 	// and
+			e.CPU.V[X] &= e.CPU.V[Y]
+
+		case 0x3: // XOR
+			e.CPU.V[X] ^= e.CPU.V[Y]
+			
+		case 0x4: // ADD with carry
+			sum := uint16(e.CPU.V[X]) + uint16(e.CPU.V[Y])
+			if sum> 0xFF {
+				e.CPU.V[0xF] = 1
+			}else{
+				e.CPU.V[0xF] = 0
+			}
+			e.CPU.V[X] = byte(sum)	
+		}	
+
+		case 0x5: //Sub Vx= Vx - Vy
+			if e.CPU.V[X] >= e.CPU.V[Y]{
+				e.CPU.V[0XF] = 1
+			}else{
+				e.CPU.V[0xF]= 0
+			}
+			e.CPU.V[X] -= e.CPU.V[Y]
+
+		case 0x6: // SHR
+			e.CPU.V[0xF] = e.CPU.V[X] & 0x1
+			e.CPU.V[X] >>= 1
+
+		case 0x7: // SUBN Vx = Vy - Vx
+			if e.CPU.V[Y] >= e.CPU.V[X]{
+				e.CPU.V[0xF] = 1
+			}else{
+				e.CPU.V[0xF] = 0
+			}	
+			e.CPU.V[X] = e.CPU.V[Y] - e.CPU.V[X]
+		
+		case 0xE: //SHL
+			e.CPU.V[0xF] = (e.CPU.V[X] >> 7) & 0x1
+			e.CPU.V[X] <<= 1
+				
 		
 	default:
 		fmt.Printf("Unknown OPcode : %04X\n",opcode)	
