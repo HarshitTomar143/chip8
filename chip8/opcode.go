@@ -26,7 +26,7 @@ func (e *Emulator)Cycle (){
 	X := (opcode & 0x0F00) >> 8
 	nn:= byte(opcode & 0x00FF)
 	nnn := opcode & 0x0FFF
-	Y := (opcode & 0X00F0) >> 8
+	Y := (opcode & 0X00F0) >> 4
 
 	// Executing (start small)
 	switch opcode & 0xF000 {
@@ -102,7 +102,7 @@ func (e *Emulator)Cycle (){
 				e.CPU.V[0xF] = 0
 			}
 			e.CPU.V[X] = byte(sum)	
-		}	
+			
 
 		case 0x5: //Sub Vx= Vx - Vy
 			if e.CPU.V[X] >= e.CPU.V[Y]{
@@ -127,6 +127,7 @@ func (e *Emulator)Cycle (){
 		case 0xE: //SHL
 			e.CPU.V[0xF] = (e.CPU.V[X] >> 7) & 0x1
 			e.CPU.V[X] <<= 1
+		}
 				
 		
 	default:
