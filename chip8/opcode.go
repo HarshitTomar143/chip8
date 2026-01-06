@@ -61,6 +61,9 @@ func (e *Emulator)Cycle (){
 		case 0x00EE:
 			e.CPU.SP--
 			e.CPU.PC = e.CPU.Stack[e.CPU.SP]
+
+		case 0x00E0: // CLS
+			e.ClearDisplay()	
 		}	
 	
 	case 0x9000:
@@ -155,6 +158,11 @@ func (e *Emulator)Cycle (){
 			e.CPU.SoundTimer = e.CPU.V[X]
 
 		}
+
+	
+	
+	
+
 
 	
 		
