@@ -25,12 +25,13 @@ func main() {
 		fmt.Printf("PC: %04X V0: %d\n", emu.CPU.PC, emu.CPU.V[0])
 	}
 
-	fmt.Printf("Font[0]: %02X %02X %02X %02X %02X\n",
-		emu.Memory.Data[0x050],
-		emu.Memory.Data[0x051],
-		emu.Memory.Data[0x052],
-		emu.Memory.Data[0x053],
-		emu.Memory.Data[0x054],
-	)
+	fmt.Println("Framebuffer output:")
+	for y := 5; y < 10; y++ {
+		for x := 10; x < 18; x++ {
+			fmt.Print(emu.Display[y][x])
+		}
+		fmt.Println()
+	}
+
 
 }

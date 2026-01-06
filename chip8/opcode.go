@@ -159,13 +159,33 @@ func (e *Emulator)Cycle (){
 
 		}
 
-	
-	
-	
-
-
-	
+	case 0xD000: // DRW Vx, Vy, nibble 
+		x := e.CPU.V[X] % 64
+		y := e.CPU.V[Y] % 32
+		height := opcode & 0x000F
 		
+		e.CPU.V[0xF] = 0
+
+		for row := uint16(0); row < height; row++ {
+			spriteByte := e.Memory.Data[e.CPU.I+row]
+
+			for col := uint16(0); col < 8 ; col++ {
+				spritePixel := (spriteByte >> (7- col)) & 1
+				if spritePixel == 0{
+					continue
+				}
+
+				px := (uint16(x) + col) % 64
+				py := (uint16(y) + row) % 32
+
+				if e.Display[py][px] == 1{
+					e.CPU.V[0xF] = 1
+				}
+
+				e.Display[py][px] ^= 1
+			}
+		}
+
 	default:
 		fmt.Printf("Unknown OPcode : %04X\n",opcode)	
 	}
