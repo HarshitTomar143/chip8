@@ -129,6 +129,34 @@ func (e *Emulator)Cycle (){
 			e.CPU.V[X] <<= 1
 		}
 				
+	case 0xF000:
+		switch nn{
+
+		// Memory OPS	
+		case 0x55: // FX55 - store V0..Vx in memory at I
+			for i := uint16(0); i<= X; i++{
+				e.Memory.Data[e.CPU.I+i]= e.CPU.V[i]
+			}
+		
+		case 0x65: // FX65 - load V0..Vx from memory at I
+			for i := uint16(0); i <= X; i++ {
+				e.CPU.V[i] = e.Memory.Data[e.CPU.I+i]
+			}
+
+		// Timers
+		
+		case 0x07: // FX07: Vx = DelayTimer
+		e.CPU.V[X] = e.CPU.DelayTimer
+
+		case 0x15: // FX15: DelayTimer = Vx
+			e.CPU.DelayTimer = e.CPU.V[X]
+
+		case 0x18: // FX18: SoundTimer = Vx
+			e.CPU.SoundTimer = e.CPU.V[X]
+
+		}
+
+	
 		
 	default:
 		fmt.Printf("Unknown OPcode : %04X\n",opcode)	

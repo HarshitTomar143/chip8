@@ -5,5 +5,9 @@ type CPU struct{
 	I uint16 // Index Register
 	PC uint16 // Program Counter
 	SP byte // stack Pointer
-	Stack[16]uint16 //Call Stack 
+	Stack[16]uint16 //Call Stack
+	
+	// Timers
+	DelayTimer byte
+	SoundTimer byte 
 }
